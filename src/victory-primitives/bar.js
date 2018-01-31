@@ -12,7 +12,12 @@ export default class Bar extends React.Component {
     ...CommonProps,
     alignment: PropTypes.oneOf(["start", "middle", "end"]),
     barRatio: PropTypes.number,
-    cornerRadius: PropTypes.number,
+    cornerRadius: PropTypes.oneOfType([
+      PropTypes.number,
+      PropTypes.shape({
+        top: PropTypes.number, bottom: PropTypes.number
+      })
+    ]),
     datum: PropTypes.object,
     horizontal: PropTypes.bool,
     padding: PropTypes.oneOfType([
@@ -80,15 +85,40 @@ export default class Bar extends React.Component {
     const sign = y0 > y1 ? 1 : -1;
     const direction = sign > 0 ? "0 0 1" : "0 0 0";
     const arc = `${cornerRadius} ${cornerRadius} ${direction}`;
+
+    // check for cornerRadius.bottom
+    // inject new path commands
+
+    /**
+     * M L A L A L
+     * ...
+     * A (arc, x, y)
+     * L (x, y)
+     * A (arc, x, y)
+     * ...
+     * L z
+     */
+
     return `M ${x0}, ${y0}
       L ${x0}, ${y1 + sign * cornerRadius}
       A ${arc}, ${x0 + cornerRadius}, ${y1}
       L ${x1 - cornerRadius}, ${y1}
       A ${arc}, ${x1}, ${y1 + sign * cornerRadius}
       L ${x1}, ${y0}
+
       L ${x0}, ${y0}
       z`;
   }
+
+    /**
+     * M
+     * ...
+     * A (arc, x, y)
+     * L (x, y)
+     * A (arc, x, y)
+     * ...
+     * L L A L A L z
+     */
 
   getHorizontalBarPath(props, width) {
     const { x0, x1, y0, y1 } = this.getPosition(props, width);
