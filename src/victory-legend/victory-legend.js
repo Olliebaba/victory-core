@@ -9,7 +9,7 @@ import VictoryLabel from "../victory-label/victory-label";
 import VictoryContainer from "../victory-container/victory-container";
 import VictoryTheme from "../victory-theme/victory-theme";
 import Point from "../victory-primitives/point";
-import Border from "../victory-primitives/border";
+import Box from "../victory-primitives/box";
 
 const fallbackProps = {
   orientation: "vertical",
