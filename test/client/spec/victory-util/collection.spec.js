@@ -3,6 +3,9 @@
 /* global sinon */
 
 import { Collection } from "src/index";
+import React from "react";
+import { mount } from "enzyme";
+import VictoryLabel from "src/victory-label/victory-label";
 
 describe("collections", () => {
 
@@ -327,14 +330,14 @@ describe("collections", () => {
       });
     });
 
-    it("does not hang on circular structures", () => {
-      const obj = {};
-      obj.self = obj;
-      const a = { x: obj };
-      const b = { x: obj };
-      const c = { y: obj };
-      expect(Collection.areVictoryPropsEqual(a, b)).to.equal(true);
-      expect(Collection.areVictoryPropsEqual(a, c)).to.equal(false);
+    it("handles circular react elements", () => {
+      const Test = () => {
+        // these elements contain circular references to the owning Test component
+        Collection.areVictoryPropsEqual({ x: <VictoryLabel /> }, { x: <VictoryLabel /> });
+        JSON.stringify(<VictoryLabel />);
+        return null;
+      };
+      mount(<Test />);
     });
 
     it("correctly distinguishes null, NaN and undefined", () => {
